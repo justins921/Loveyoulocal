@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -12,6 +12,7 @@ import {
   LogOut,
   LayoutDashboard,
 } from 'lucide-react';
+import { useAuth } from '@/lib/auth-context';
 
 const navLinks = [
   { label: 'Home', href: '/' },
@@ -20,35 +21,14 @@ const navLinks = [
   { label: 'Bars & Specials', href: '/bars' },
 ];
 
-interface AuthUser {
-  id: string;
-  name: string | null;
-  email: string;
-  role: string;
-}
-
 export default function Header() {
   const router = useRouter();
+  const { user, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [user, setUser] = useState<AuthUser | null>(null);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
-  useEffect(() => {
-    const stored = localStorage.getItem('ilovefdl_user');
-    if (stored) {
-      try {
-        setUser(JSON.parse(stored));
-      } catch {
-        // ignore
-      }
-    }
-  }, []);
-
   const handleLogout = () => {
-    localStorage.removeItem('ilovefdl_token');
-    localStorage.removeItem('ilovefdl_user');
-    localStorage.removeItem('ilovefdl_refresh_token');
-    setUser(null);
+    logout();
     setUserMenuOpen(false);
     setMobileMenuOpen(false);
     router.push('/');

@@ -207,7 +207,12 @@ export class ApiClient {
 
   /** Update an existing product */
   async updateProduct(id: string, data: UpdateProductInput): Promise<ApiResponse<Product>> {
-    return this.patch<ApiResponse<Product>>(`/products/${id}`, data);
+    return this.put<ApiResponse<Product>>(`/products/${id}`, data);
+  }
+
+  /** Delete a product (soft delete) */
+  async deleteProduct(id: string): Promise<ApiResponse<{ message: string }>> {
+    return this.delete<ApiResponse<{ message: string }>>(`/products/${id}`);
   }
 
   // ─── ORDERS / CHECKOUT ────────────────────────────────
