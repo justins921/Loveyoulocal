@@ -263,7 +263,12 @@ export class ApiClient {
 
   /** Update an existing blog post */
   async updatePost(id: string, data: UpdateBlogPostInput): Promise<ApiResponse<BlogPost>> {
-    return this.patch<ApiResponse<BlogPost>>(`/posts/${id}`, data);
+    return this.put<ApiResponse<BlogPost>>(`/posts/${id}`, data);
+  }
+
+  /** Delete a blog post */
+  async deletePost(id: string): Promise<ApiResponse<{ message: string }>> {
+    return this.delete<ApiResponse<{ message: string }>>(`/posts/${id}`);
   }
 
   // ─── BARS ─────────────────────────────────────────────
@@ -287,7 +292,12 @@ export class ApiClient {
 
   /** Update an existing bar */
   async updateBar(id: string, data: UpdateBarInput): Promise<ApiResponse<Bar>> {
-    return this.patch<ApiResponse<Bar>>(`/bars/${id}`, data);
+    return this.put<ApiResponse<Bar>>(`/bars/${id}`, data);
+  }
+
+  /** Delete a bar (soft delete) */
+  async deleteBar(id: string): Promise<ApiResponse<{ message: string }>> {
+    return this.delete<ApiResponse<{ message: string }>>(`/bars/${id}`);
   }
 
   // ─── SPECIALS ─────────────────────────────────────────
@@ -311,7 +321,26 @@ export class ApiClient {
 
   /** Update an existing special */
   async updateSpecial(id: string, data: UpdateSpecialInput): Promise<ApiResponse<Special>> {
-    return this.patch<ApiResponse<Special>>(`/specials/${id}`, data);
+    return this.put<ApiResponse<Special>>(`/specials/${id}`, data);
+  }
+
+  /** Delete a special */
+  async deleteSpecial(id: string): Promise<ApiResponse<{ message: string }>> {
+    return this.delete<ApiResponse<{ message: string }>>(`/specials/${id}`);
+  }
+
+  // ─── USERS (ADMIN) ─────────────────────────────────────
+
+  /** List all users (admin only) */
+  async getUsers(
+    params?: PaginationParams & { role?: string; search?: string },
+  ): Promise<PaginatedResponse<User>> {
+    return this.get<PaginatedResponse<User>>('/users', params as Record<string, string | number | boolean | undefined>);
+  }
+
+  /** Update a user's role (admin only) */
+  async updateUserRole(id: string, role: string): Promise<ApiResponse<User>> {
+    return this.put<ApiResponse<User>>(`/users/${id}/role`, { role });
   }
 
   // ─── PUSH NOTIFICATIONS ──────────────────────────────

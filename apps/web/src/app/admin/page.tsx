@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   Store,
   ShoppingBag,
@@ -15,6 +16,7 @@ import {
   Clock,
 } from 'lucide-react';
 import api from '@/lib/api';
+import { useAuth } from '@/lib/auth-context';
 import { formatPrice, formatDate } from '@/lib/utils';
 import type { Order, Vendor, Product, BlogPost } from '@ilovefdl/shared';
 
@@ -26,6 +28,8 @@ interface DashboardStats {
 }
 
 export default function AdminPage() {
+  const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const [stats, setStats] = useState<DashboardStats>({
     vendorCount: 0,
     productCount: 0,
@@ -36,6 +40,12 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (authLoading) return;
+    if (!user || user.role !== 'ADMIN') {
+      router.push('/auth');
+      return;
+    }
+
     async function fetchDashboardData() {
       try {
         const [vendorsRes, productsRes, ordersRes] = await Promise.all([
@@ -63,7 +73,7 @@ export default function AdminPage() {
       }
     }
     fetchDashboardData();
-  }, []);
+  }, [user, authLoading, router]);
 
   const statCards = [
     {
@@ -146,10 +156,10 @@ export default function AdminPage() {
         {/* Quick Links */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
           {[
-            { label: 'Manage Vendors', href: '/vendors', icon: Store, color: 'border-teal' },
-            { label: 'Manage Products', href: '/marketplace', icon: ShoppingBag, color: 'border-accent' },
-            { label: 'Blog Posts', href: '/news', icon: Newspaper, color: 'border-primary' },
-            { label: 'Bars & Specials', href: '/bars', icon: Beer, color: 'border-teal' },
+            { label: 'Blog / Newsletter', href: '/admin/posts', icon: Newspaper, color: 'border-primary' },
+            { label: 'Bars & Specials', href: '/admin/bars', icon: Beer, color: 'border-teal' },
+            { label: 'All Products', href: '/admin/products', icon: ShoppingBag, color: 'border-accent' },
+            { label: 'Users & Editors', href: '/admin/users', icon: Users, color: 'border-purple-500' },
           ].map((link) => (
             <Link
               key={link.label}

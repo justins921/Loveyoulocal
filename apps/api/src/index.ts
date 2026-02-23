@@ -12,6 +12,7 @@ import blogRoutes from './routes/blog';
 import barRoutes from './routes/bars';
 import specialRoutes from './routes/specials';
 import notificationRoutes from './routes/notifications';
+import userRoutes from './routes/users';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -68,6 +69,7 @@ app.use('/posts', blogRoutes);
 app.use('/bars', barRoutes);
 app.use('/specials', specialRoutes);
 app.use('/push', notificationRoutes);
+app.use('/users', userRoutes);
 
 // ─── Health check ────────────────────────────────────────
 app.get('/health', (_req, res) => {
